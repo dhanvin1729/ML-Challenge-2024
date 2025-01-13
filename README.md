@@ -39,4 +39,35 @@ dataset/sample_test.csv: Sample test input file.
 
 dataset/sample_test_out.csv: Sample outputs for sample_test.csv. The output for test.csv must be formatted in the exact same way. Note: The predictions in the file might not be correct
 
-Our Solution
+# Our Solution
+We decided to fine-tune the PaliGemma model, available on Hugging Face. PaliGemma is a versatile and lightweight vision-language model (VLM) inspired by PaLI-3 and based on open components such as the SigLIP vision model and the Gemma language model. It takes both image and text as input and generates text as output, supporting multiple languages. PaliGemma is the composition of a Transformer decoder and a Vision Transformer image encoder, with a total of 3 billion params. The text decoder is initialized from Gemma-2B. The image encoder is initialized from SigLIP-So400m/14.
+
+**Data Preparation**
+
+The dataset is read from a CSV file, and unnecessary columns are dropped. The data is then split into training and evaluation datasets. Each dataset entry contains:
+	•	An image link.
+	•	A corresponding question.
+	•	The expected answer.
+
+**Pre-trained Model Setup**
+
+The project uses PaliGemma, a model pre-trained for vision-language tasks:
+	•	The model is loaded in 4-bit quantized mode for efficient GPU memory utilization.
+	•	The processor (PaliGemmaProcessor) is configured to handle text and image inputs.
+ 
+**Fine-tuning with LoRA**
+
+LoRA is applied for lightweight fine-tuning:
+	•	Target modules like q_proj, k_proj, and others are adapted for task-specific tuning.
+	•	Trainable parameters are minimized while retaining high performance.
+
+ **Training Loop**
+
+A custom data collator handles image loading and tokenization:
+	•	Images are fetched from the URLs, resized, and converted to RGB format.
+	•	Questions and answers are tokenized into the input format required by the model.
+
+The SFTTrainer from Hugging Face’s trl library is used for supervised fine-tuning:
+	•	Key training hyperparameters, including batch size, learning rate, and weight decay, are configured.
+	•	The training process logs progress and saves model checkpoints.
+
