@@ -1,0 +1,15 @@
+git+https://github.com/huggingface/transformers.git
+torch
+torchvision
+torchaudio
+trl
+accelerate
+transformers
+peft
+utils
+bitsandbytes
+pillow
+matplotlib
+requests
+pandas
+huggingface_hub
